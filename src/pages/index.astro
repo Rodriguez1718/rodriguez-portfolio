@@ -261,10 +261,10 @@ const titleWords = title.split(" ");
 
 	{
 		featuredProjects.length > 0 ? (
-			<section class="featured" id="work">
-				<div class="featured-grid-layout">
+			<section class="featured pin-section" id="work">
+				<div class="featured-content">
 					<div class="featured-left">
-						<div class="featured-sticky">
+						<div class="featured-header">
 							<span class="featured-number">
 								[03] // PORTFOLIO
 							</span>
@@ -274,20 +274,33 @@ const titleWords = title.split(" ");
 								engineered to push the boundaries of digital
 								interface design.
 							</p>
-							<a href="/work" class="featured-link-btn">
-								<span>View All Projects</span>
-								<span class="arrow">&rarr;</span>
-							</a>
 						</div>
+						<div class="projects-list-wrapper">
+							<ul class="projects-list">
+								{featuredProjects.map((project: Project, index: number) => (
+									<li class="project-list-item" data-index={index}>
+										<span class="project-number">0{index + 1}</span>
+										<span class="project-title-text">{project.title ?? "Untitled"}</span>
+									</li>
+								))}
+							</ul>
+							<div class="fill-indicator"></div>
+						</div>
+						<a href="/work" class="featured-link-btn">
+							<span>View All Projects</span>
+							<span class="arrow">&rarr;</span>
+						</a>
 					</div>
 					<div class="featured-right">
-						<div class="projects-grid">
-							{featuredProjects.map((project: Project) => (
+						{featuredProjects.map((project: Project) => (
+							<div class="project-slide">
 								<ProjectCard
 									title={project.title ?? "Untitled"}
 									summary={project.summary}
 									featuredImage={
-										project.featured_image ?? ""
+										project.featured_image 
+											? urlFor(project.featured_image).width(800).url()
+											: ""
 									}
 									href={`/work/${project.slug?.current || project._id}`}
 									client={project.client}
@@ -300,8 +313,8 @@ const titleWords = title.split(" ");
 											: []
 									}
 								/>
-							))}
-						</div>
+							</div>
+						))}
 					</div>
 				</div>
 			</section>
@@ -733,33 +746,36 @@ const titleWords = title.split(" ");
 	}
 
 	.featured {
-		max-width: var(--wide-width);
-		margin: 0 auto;
-		padding: var(--spacing-4xl) var(--spacing-lg);
+		width: 100%;
+		min-height: 100vh;
+		padding: var(--spacing-4xl) 0;
 		border-top: 1px solid var(--color-border);
 	}
 
-	.featured-grid-layout {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: var(--spacing-2xl);
+	.pin-section {
+		position: relative;
 	}
 
-	@media (min-width: 768px) {
-		.featured-grid-layout {
-			grid-template-columns: 2fr 3fr;
-			gap: var(--spacing-4xl);
-		}
+	.featured-content {
+		width: 100%;
+		max-width: var(--wide-width);
+		margin: 0 auto;
+		padding: 0 var(--spacing-lg);
+		display: flex;
+		gap: var(--spacing-4xl);
+		align-items: flex-start;
 	}
 
 	.featured-left {
+		flex: 0 0 35%;
+		position: relative;
 		display: flex;
 		flex-direction: column;
+		gap: var(--spacing-2xl);
 	}
 
-	.featured-sticky {
-		position: sticky;
-		top: var(--spacing-2xl);
+	.featured-header {
+		margin-bottom: var(--spacing-lg);
 	}
 
 	.featured-number {
@@ -790,6 +806,85 @@ const titleWords = title.split(" ");
 		margin-bottom: var(--spacing-lg);
 	}
 
+	.projects-list-wrapper {
+		position: relative;
+		padding-left: var(--spacing-md);
+	}
+
+	.projects-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		position: relative;
+	}
+
+	.project-list-item {
+		display: flex;
+		align-items: baseline;
+		gap: var(--spacing-md);
+		padding: var(--spacing-md) 0;
+		cursor: pointer;
+		transition: all var(--transition-fast);
+		opacity: 0.4;
+		border-bottom: 1px solid transparent;
+	}
+
+	.project-list-item.active {
+		opacity: 1;
+		border-bottom-color: var(--color-text);
+	}
+
+	.project-number {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--color-accent);
+		font-weight: 600;
+	}
+
+	.project-title-text {
+		font-family: "Syne", sans-serif;
+		font-size: var(--font-size-lg);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: -0.02em;
+		color: var(--color-text);
+	}
+
+	.fill-indicator {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 3px;
+		height: 0%;
+		background: linear-gradient(
+			to bottom,
+			var(--color-accent),
+			var(--color-accent-muted)
+		);
+		transition: height 0.1s ease-out;
+	}
+
+	.featured-right {
+		flex: 1;
+		position: relative;
+		min-height: 600px;
+	}
+
+	.project-slide {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity var(--transition-base);
+	}
+
+	.project-slide.active {
+		opacity: 1;
+		visibility: visible;
+	}
+
 	.featured-link-btn {
 		display: inline-flex;
 		align-items: center;
@@ -818,6 +913,12 @@ const titleWords = title.split(" ");
 
 	.featured-link-btn:hover .arrow {
 		transform: translateX(4px);
+	}
+
+	.projects-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--spacing-2xl);
 	}
 
 	.skills {
@@ -1299,6 +1400,30 @@ const titleWords = title.split(" ");
 		.skills-container {
 			padding: var(--spacing-2xl) var(--spacing-md);
 		}
+
+		.featured-content {
+			flex-direction: column;
+			padding: 0 var(--spacing-md);
+		}
+
+		.featured-left {
+			flex: 1;
+			width: 100%;
+		}
+
+		.featured-right {
+			width: 100%;
+			position: relative;
+			min-height: 500px;
+		}
+
+		.project-list-item {
+			font-size: var(--font-size-sm);
+		}
+
+		.project-title-text {
+			font-size: var(--font-size-base);
+		}
 	}
 </style>
 
@@ -1564,5 +1689,73 @@ const titleWords = title.split(" ");
 		document.addEventListener("DOMContentLoaded", initHeroScroll);
 	} else {
 		initHeroScroll();
+	}
+
+	// Lateral Pin Indicator for Featured Projects
+	const initLateralPinIndicator = () => {
+		const pinSection = document.querySelector(".pin-section");
+		const projectsList = document.querySelector(".projects-list");
+		const fillIndicator = document.querySelector(".fill-indicator");
+		const listItems = gsap.utils.toArray(".project-list-item");
+		const slides = gsap.utils.toArray(".project-slide");
+
+		if (!pinSection || !projectsList || !fillIndicator || listItems.length === 0) return;
+
+		// Set initial state - first item active
+		if (listItems.length > 0) {
+			(listItems[0] as HTMLElement).classList.add("active");
+		}
+		if (slides.length > 0) {
+			(slides[0] as HTMLElement).classList.add("active");
+		}
+
+		// Create the timeline with extended duration for the last project
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: pinSection,
+				start: "top top",
+				end: `+=${(listItems.length + 1) * 100}%`, // Add extra scroll space
+				pin: true,
+				scrub: 1,
+				// markers: true, // Uncomment for debugging
+			},
+		});
+
+		// Animate the fill indicator to complete at the end of the last project
+		tl.to(fillIndicator, {
+			height: "100%",
+			ease: "none",
+			duration: listItems.length, // Duration matches number of items
+		}, 0);
+
+		// Animate through each project with equal time allocation
+		listItems.forEach((item, index) => {
+			const startTime = index;
+			const endTime = index + 1;
+
+			// Activate list item at the start of its time slot
+			tl.call(() => {
+				listItems.forEach((li) => (li as HTMLElement).classList.remove("active"));
+				(item as HTMLElement).classList.add("active");
+			}, [], startTime);
+
+			// Show corresponding slide at the start of its time slot
+			if (slides[index]) {
+				tl.call(() => {
+					slides.forEach((slide) => (slide as HTMLElement).classList.remove("active"));
+					(slides[index] as HTMLElement).classList.add("active");
+				}, [], startTime);
+			}
+		});
+
+		// Hold the last project for the extra duration
+		// The timeline naturally extends beyond the last project activation
+	};
+
+	// Initialize lateral pin indicator
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initLateralPinIndicator);
+	} else {
+		initLateralPinIndicator();
 	}
 </script>
