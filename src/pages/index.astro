@@ -41,10 +41,16 @@ interface About {
 
 // Fetch all data from Sanity
 const [allProjects, skills, experiences, contacts, about] = await Promise.all([
-	sanityClient.fetch<Project[]>(`*[_type == "project"] | order(published_at desc)`),
+	sanityClient.fetch<Project[]>(
+		`*[_type == "project"] | order(published_at desc)`,
+	),
 	sanityClient.fetch<Skill[]>(`*[_type == "skill"] | order(_createdAt asc)`),
-	sanityClient.fetch<Experience[]>(`*[_type == "experience"] | order(_createdAt desc)`),
-	sanityClient.fetch<Contact[]>(`*[_type == "contact"] | order(_createdAt asc)`),
+	sanityClient.fetch<Experience[]>(
+		`*[_type == "experience"] | order(_createdAt desc)`,
+	),
+	sanityClient.fetch<Contact[]>(
+		`*[_type == "contact"] | order(_createdAt asc)`,
+	),
 	sanityClient.fetch<About>(`*[_type == "about"][0]`),
 ]);
 
@@ -183,7 +189,12 @@ const titleWords = title.split(" ");
 								<span class="about-number">
 									[01] // HISTORY
 								</span>
-								<h2 class="about-heading">About Me</h2>
+								<div class="contact-heading-wrapper">
+									<div class="heading-plus top-left">+</div>
+									<div class="heading-plus top-right">+</div>
+									<h2 class="about-heading">About Me</h2>
+								</div>
+								
 								<div class="about-badge">
 									<span class="pulse-dot"></span>
 									<span>Available for Work</span>
@@ -194,9 +205,9 @@ const titleWords = title.split(" ");
 							<div class="about-content">
 								{
 									about?.content ? (
-										<p data-scramble>{about.content}</p>
+										<p>{about.content}</p>
 									) : (
-										<p data-scramble>
+										<p>
 											Add your bio in the Sanity Studio
 										</p>
 									)
@@ -217,7 +228,12 @@ const titleWords = title.split(" ");
 										<span class="skills-number">
 											[02] // EXPERTISE
 										</span>
-										<h2 class="skills-heading">Skills</h2>
+										<div class="contact-heading-wrapper">
+											<div class="heading-plus top-left">+</div>
+											<div class="heading-plus top-right">+</div>
+											<h2 class="skills-heading">Skills</h2>
+										</div>
+										
 										<p class="skills-intro">
 											A focused catalog of technologies
 											and tools used to construct
@@ -261,60 +277,90 @@ const titleWords = title.split(" ");
 
 	{
 		featuredProjects.length > 0 ? (
-			<section class="featured pin-section" id="work">
+			<section class="featured" id="work">
 				<div class="featured-content">
 					<div class="featured-left">
 						<div class="featured-header">
 							<span class="featured-number">
 								[03] // PORTFOLIO
 							</span>
-							<h2 class="featured-heading">Selected Work</h2>
+							<div class="contact-heading-wrapper">
+								<div class="heading-plus top-left">+</div>
+								<div class="heading-plus top-right">+</div>
+								<h2 class="featured-heading">Selected Work</h2>
+							</div>
+							
 							<p class="featured-intro">
 								A curated presentation of projects designed and
 								engineered to push the boundaries of digital
 								interface design.
 							</p>
 						</div>
-						<div class="projects-list-wrapper">
-							<ul class="projects-list">
-								{featuredProjects.map((project: Project, index: number) => (
-									<li class="project-list-item" data-index={index}>
-										<span class="project-number">0{index + 1}</span>
-										<span class="project-title-text">{project.title ?? "Untitled"}</span>
-									</li>
-								))}
-							</ul>
-							<div class="fill-indicator"></div>
+						<div class="magnetic-zone">
+							<a href="/work" class="featured-link-btn">
+								<span>View All Projects</span>
+								<span class="arrow">&rarr;</span>
+							</a>
 						</div>
-						<a href="/work" class="featured-link-btn">
-							<span>View All Projects</span>
-							<span class="arrow">&rarr;</span>
-						</a>
 					</div>
 					<div class="featured-right">
-						{featuredProjects.map((project: Project) => (
-							<div class="project-slide">
-								<ProjectCard
-									title={project.title ?? "Untitled"}
-									summary={project.summary}
-									featuredImage={
-										project.featured_image 
-											? urlFor(project.featured_image).width(800).url()
-											: ""
-									}
-									href={`/work/${project.slug?.current || project._id}`}
-									client={project.client}
-									year={project.year}
-									tags={
-										project.tag
-											? project.tag
-													.split(",")
-													.map((t: string) => t.trim())
-											: []
-									}
-								/>
-							</div>
-						))}
+						<div class="featured-timeline">
+							{featuredProjects.map(
+								(project: Project, index: number) => (
+									<div class="timeline-item">
+										<div class="timeline-marker">
+											<div class="timeline-dot" />
+											{index <
+												featuredProjects.length - 1 && (
+												<div class="timeline-line" />
+											)}
+										</div>
+										<div class="timeline-card-wrapper">
+											<div class="timeline-project-meta">
+												<span class="timeline-project-number">
+													0{index + 1}
+												</span>
+												{project.year && (
+													<span class="timeline-project-year">
+														{project.year}
+													</span>
+												)}
+											</div>
+											<ProjectCard
+												title={
+													project.title ?? "Untitled"
+												}
+												summary={project.summary}
+												featuredImage={
+													project.featured_image
+														? urlFor(
+																project.featured_image,
+															)
+																.width(800)
+																.url()
+														: ""
+												}
+												href={`/work/${project.slug?.current || project._id}`}
+												client={project.client}
+												year={project.year}
+												tags={
+													project.tag
+														? project.tag
+																.split(",")
+																.map(
+																	(
+																		t: string,
+																	) =>
+																		t.trim(),
+																)
+														: []
+												}
+											/>
+										</div>
+									</div>
+								),
+							)}
+						</div>
 					</div>
 				</div>
 			</section>
@@ -332,45 +378,65 @@ const titleWords = title.split(" ");
 	{
 		experiences.length > 0 && (
 			<section class="experience" id="experience">
-				<div class="experience-grid-layout">
-					<div class="experience-left">
-						<div class="experience-sticky">
-							<span class="experience-number">
-								[04] // TIMELINE
-							</span>
-							<h2 class="experience-heading">Experience</h2>
-							<p class="experience-intro">
-								A timeline of technical roles, professional
-								achievements, and industry contributions.
-							</p>
+				<!-- Vertical Lines Background -->
+				<div class="experience-bg-lines">
+					<div class="vertical-line"></div>
+					<div class="vertical-line"></div>
+					<div class="vertical-line"></div>
+					<div class="vertical-line"></div>
+					<div class="vertical-line"></div>
+					<div class="vertical-line"></div>
+				</div>
+				
+				<div class="experience-container">
+					<div class="experience-header">
+						<span class="experience-number">
+							[04] // TIMELINE
+						</span>
+						<div class="contact-heading-wrapper">
+								<div class="heading-plus top-left">+</div>
+								<div class="heading-plus top-right">+</div>
+								<h2 class="experience-heading">Experience</h2>
 						</div>
+						
+						<p class="experience-intro">
+							A timeline of technical roles, professional
+							achievements, and industry contributions.
+						</p>
 					</div>
-					<div class="experience-right">
-						<div class="experience-timeline">
-							{experiences.map((exp: Experience) => (
-								<div class="experience-row">
-									<div class="experience-row-header">
-										<div class="role-company-group">
-											<h3 class="experience-role">
+					
+					<div class="experience-timeline" id="experience-timeline">
+						{experiences.map((exp: Experience, index: number) => (
+							<div class="experience-card" data-index={index}>
+								<div class="experience-card-inner">
+									<div class="experience-card-content">
+										<div class="experience-card-left">
+											<h3 class="experience-card-title">
 												{exp.role}
 											</h3>
-											<span class="experience-company">
-												{exp.company}
+											<div class="experience-card-meta">
+												<span class="experience-card-company">
+													{exp.company}
+												</span>
+												<span class="experience-card-dates">
+													{exp.start_date} — {exp.end_date}
+												</span>
+											</div>
+											{exp.description && (
+												<p class="experience-card-description">
+													{exp.description}
+												</p>
+											)}
+										</div>
+										<div class="experience-card-right">
+											<span class="experience-card-number">
+												{String(index + 1).padStart(2, '0')}
 											</span>
 										</div>
-										<span class="experience-dates">
-											{exp.start_date} —{" "}
-											{exp.end_date}
-										</span>
 									</div>
-									{exp.description && (
-										<div class="experience-description">
-											<p>{exp.description}</p>
-										</div>
-									)}
 								</div>
-							))}
-						</div>
+							</div>
+						))}
 					</div>
 				</div>
 			</section>
@@ -380,11 +446,16 @@ const titleWords = title.split(" ");
 	{
 		contacts.length > 0 && (
 			<section class="contact" id="contact">
+				
 				<div class="contact-grid-layout">
 					<div class="contact-left">
 						<div class="contact-sticky">
 							<span class="contact-number">[05] // CONNECT</span>
-							<h2 class="contact-heading">Contact</h2>
+							<div class="contact-heading-wrapper">
+								<div class="heading-plus top-left">+</div>
+								<div class="heading-plus top-right">+</div>
+								<h2 class="contact-heading">Contact</h2>
+							</div>
 							<p class="contact-intro">
 								Let's collaborate on your next venture. Reach
 								out directly or connect through my digital
@@ -752,10 +823,6 @@ const titleWords = title.split(" ");
 		border-top: 1px solid var(--color-border);
 	}
 
-	.pin-section {
-		position: relative;
-	}
-
 	.featured-content {
 		width: 100%;
 		max-width: var(--wide-width);
@@ -768,7 +835,9 @@ const titleWords = title.split(" ");
 
 	.featured-left {
 		flex: 0 0 35%;
-		position: relative;
+		position: sticky;
+		top: 140px; /* Aligns beautifully below the fixed site header */
+		align-self: start;
 		display: flex;
 		flex-direction: column;
 		gap: var(--spacing-2xl);
@@ -806,83 +875,96 @@ const titleWords = title.split(" ");
 		margin-bottom: var(--spacing-lg);
 	}
 
-	.projects-list-wrapper {
-		position: relative;
-		padding-left: var(--spacing-md);
+	.featured-right {
+		flex: 1;
+		width: 100%;
 	}
 
-	.projects-list {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		position: relative;
-	}
-
-	.project-list-item {
+	.featured-timeline {
 		display: flex;
-		align-items: baseline;
-		gap: var(--spacing-md);
-		padding: var(--spacing-md) 0;
-		cursor: pointer;
-		transition: all var(--transition-fast);
-		opacity: 0.4;
-		border-bottom: 1px solid transparent;
+		flex-direction: column;
+		gap: var(--spacing-3xl);
+		position: relative;
+		width: 100%;
 	}
 
-	.project-list-item.active {
-		opacity: 1;
-		border-bottom-color: var(--color-text);
+	.timeline-item {
+		display: flex;
+		gap: var(--spacing-xl);
+		position: relative;
+		width: 100%;
 	}
 
-	.project-number {
+	.timeline-marker {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		flex-shrink: 0;
+		width: 24px;
+		padding-top: 12px;
+	}
+
+	.timeline-dot {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		border: 2px solid var(--color-text);
+		background-color: var(--color-bg);
+		z-index: 2;
+		position: relative;
+		transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.timeline-line {
+		position: absolute;
+		top: 24px;
+		bottom: calc(-1 * var(--spacing-3xl) - 12px);
+		width: 2px;
+		background-color: var(--color-border);
+		z-index: 1;
+		transform-origin: top center;
+	}
+
+	.timeline-card-wrapper {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-sm);
+	}
+
+	.timeline-project-meta {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 		font-family: var(--font-mono);
 		font-size: var(--font-size-sm);
+		color: var(--color-muted);
+	}
+
+	.timeline-project-number {
 		color: var(--color-accent);
 		font-weight: 600;
 	}
 
-	.project-title-text {
-		font-family: "Syne", sans-serif;
-		font-size: var(--font-size-lg);
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: -0.02em;
-		color: var(--color-text);
+	.timeline-project-year {
+		font-weight: 500;
 	}
 
-	.fill-indicator {
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 3px;
-		height: 0%;
-		background: linear-gradient(
-			to bottom,
-			var(--color-accent),
-			var(--color-accent-muted)
-		);
-		transition: height 0.1s ease-out;
-	}
-
-	.featured-right {
-		flex: 1;
-		position: relative;
-		min-height: 600px;
-	}
-
-	.project-slide {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		opacity: 0;
-		visibility: hidden;
-		transition: opacity var(--transition-base);
-	}
-
-	.project-slide.active {
-		opacity: 1;
-		visibility: visible;
+	.magnetic-zone {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 280px;
+		height: 280px;
+		border-radius: 50%;
+		align-self: start;
+		/* Align button left-edge to the parent column by offsetting the extra circular padding */
+		margin-top: -115px;
+		margin-bottom: -115px;
+		margin-left: -50px;
+		margin-right: -50px;
+		cursor: pointer;
 	}
 
 	.featured-link-btn {
@@ -899,7 +981,11 @@ const titleWords = title.split(" ");
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		width: fit-content;
-		transition: all var(--transition-fast);
+		position: relative;
+		will-change: transform;
+		transition:
+			background var(--transition-fast),
+			color var(--transition-fast);
 	}
 
 	.featured-link-btn:hover {
@@ -1066,33 +1152,51 @@ const titleWords = title.split(" ");
 	}
 
 	.experience {
-		max-width: var(--wide-width);
-		margin: 0 auto;
-		padding: var(--spacing-4xl) var(--spacing-lg);
-		border-top: 1px solid var(--color-border);
+		position: relative;
+		overflow: hidden;
+		background-color: #0a0a0a;
+		padding: var(--spacing-4xl) 0;
+		margin: 0;
+		max-width: 100%;
+		width: 100%;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	}
 
-	.experience-grid-layout {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: var(--spacing-2xl);
-	}
-
-	@media (min-width: 768px) {
-		.experience-grid-layout {
-			grid-template-columns: 2fr 3fr;
-			gap: var(--spacing-4xl);
-		}
-	}
-
-	.experience-left {
+	.experience-bg-lines {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		height: 100%;
 		display: flex;
-		flex-direction: column;
+		justify-content: space-evenly;
+		pointer-events: none;
+		z-index: 0;
 	}
 
-	.experience-sticky {
-		position: sticky;
-		top: var(--spacing-2xl);
+	.vertical-line {
+		width: 1px;
+		height: 100%;
+		background: rgba(255, 255, 255, 0.2);
+		box-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+	}
+
+	.experience-container {
+		max-width: 100%;
+		width: 100%;
+		margin: 0 auto;
+		padding: 0;
+		position: relative;
+		z-index: 1;
+	}
+
+	.experience-header {
+		text-align: center;
+		margin-bottom: var(--spacing-4xl);
+		padding: 0 var(--spacing-lg);
 	}
 
 	.experience-number {
@@ -1107,7 +1211,7 @@ const titleWords = title.split(" ");
 
 	.experience-heading {
 		font-family: "Syne", sans-serif;
-		font-size: clamp(2.5rem, 5vw, 4rem);
+		font-size: clamp(3rem, 6vw, 5rem);
 		font-weight: 800;
 		line-height: 1.1;
 		text-transform: uppercase;
@@ -1117,98 +1221,216 @@ const titleWords = title.split(" ");
 	}
 
 	.experience-intro {
-		font-size: var(--font-size-base);
+		font-size: var(--font-size-lg);
 		color: var(--color-muted);
 		line-height: 1.6;
+		max-width: 600px;
+		margin: 0 auto;
 	}
 
 	.experience-timeline {
 		display: flex;
 		flex-direction: column;
-		border-bottom: 1px solid var(--color-border);
+		position: relative;
+		gap: 0;
 	}
 
-	.experience-row {
+	.experience-card {
+		position: sticky;
+		min-height: 350px;
+		margin-bottom: var(--spacing-md);
+		margin-left: var(--spacing-lg);
+		margin-right: var(--spacing-lg);
+		will-change: transform, filter;
+	}
+
+	.experience-card:nth-child(1) {
+		top: calc(10vh + 0px);
+	}
+
+	.experience-card:nth-child(2) {
+		top: calc(10vh + 30px);
+	}
+
+	.experience-card:nth-child(3) {
+		top: calc(10vh + 60px);
+	}
+
+	.experience-card:nth-child(4) {
+		top: calc(10vh + 90px);
+	}
+
+	.experience-card:nth-child(5) {
+		top: calc(10vh + 120px);
+	}
+
+	.experience-card:nth-child(6) {
+		top: calc(10vh + 150px);
+	}
+
+	.experience-card:nth-child(7) {
+		top: calc(10vh + 180px);
+	}
+
+	.experience-card:nth-child(8) {
+		top: calc(10vh + 210px);
+	}
+
+	.experience-card:nth-child(9) {
+		top: calc(10vh + 240px);
+	}
+
+	.experience-card:nth-child(10) {
+		top: calc(10vh + 270px);
+	}
+
+	.experience-card-inner {
+		background: var(--color-surface, #ffffff);
+		border: 2px solid var(--color-border, #e5e7eb);
+		border-radius: 0;
+		padding: var(--spacing-3xl) var(--spacing-2xl);
+		height: 100%;
 		display: flex;
 		flex-direction: column;
-		gap: var(--spacing-md);
-		padding: var(--spacing-xl) 0;
-		border-top: 1px solid var(--color-border);
-		transition: border-color var(--transition-fast);
+		transition: all var(--transition-fast);
+		position: relative;
 	}
 
-	.experience-row:hover {
-		border-color: var(--color-text);
+	.experience-card:nth-child(even) .experience-card-inner {
+		background: var(--color-bg, #fafafa);
 	}
 
-	.experience-row-header {
+	.experience-card-content {
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;
+		gap: var(--spacing-2xl);
+		height: 100%;
+	}
+
+	.experience-card-left {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
 		gap: var(--spacing-md);
 	}
 
-	.role-company-group {
+	.experience-card-title {
+		font-family: "Syne", sans-serif;
+		font-size: clamp(2rem, 4vw, 3.5rem);
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: -0.02em;
+		line-height: 0.95;
+		color: var(--color-text, #1a1a1a);
+		margin: 0;
+	}
+
+	.experience-card-meta {
 		display: flex;
 		flex-direction: column;
 		gap: var(--spacing-xs);
+		margin-top: var(--spacing-sm);
 	}
 
-	.experience-role {
-		font-family: "Syne", sans-serif;
-		font-size: var(--font-size-xl);
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: -0.02em;
-		color: var(--color-text);
-		line-height: 1.1;
-	}
-
-	.experience-company {
+	.experience-card-company {
 		font-family: var(--font-mono);
 		font-size: var(--font-size-sm);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		color: var(--color-accent);
+		color: var(--color-accent, #7c3aed);
 		font-weight: 600;
 	}
 
-	.experience-dates {
+	.experience-card-dates {
 		font-family: var(--font-mono);
 		font-size: var(--font-size-sm);
-		text-transform: uppercase;
-		color: var(--color-muted);
-		letter-spacing: 0.05em;
-		white-space: nowrap;
-		margin-top: 4px;
+		color: var(--color-muted, #6b7280);
+		opacity: 1;
 	}
 
-	.experience-row:hover .experience-dates {
-		color: var(--color-text);
-	}
-
-	.experience-description {
+	.experience-card-description {
 		font-size: var(--font-size-base);
-		color: var(--color-muted);
-		line-height: 1.7;
+		line-height: 1.6;
+		color: var(--color-muted, #6b7280);
+		max-width: 600px;
+		margin-top: var(--spacing-md);
 	}
 
-	@media (max-width: 640px) {
-		.experience-row-header {
+	.experience-card-right {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		right: var(--spacing-2xl);
+		top: 0;
+		bottom: 0;
+	}
+
+	.experience-card-number {
+		font-family: "Syne", sans-serif;
+		font-size: clamp(8rem, 20vw, 18rem);
+		font-weight: 800;
+		line-height: 1;
+		color: var(--color-border, rgba(0, 0, 0, 0.08));
+		user-select: none;
+	}
+
+	@media (max-width: 768px) {
+		.experience-card-content {
 			flex-direction: column;
-			gap: var(--spacing-sm);
 		}
 
-		.experience-dates {
-			margin-top: 0;
+		.experience-card-number {
+			font-size: 4rem;
 		}
 	}
+
+
 
 	.contact {
 		max-width: var(--wide-width);
 		margin: 0 auto;
 		padding: var(--spacing-4xl) var(--spacing-lg);
 		border-top: 1px solid var(--color-border);
+	}
+
+	.contact-heading-wrapper {
+		position: relative;
+		display: inline-block;
+		padding: var(--spacing-md);
+
+	}
+
+	.heading-plus {
+		position: absolute;
+		font-size: 1.5rem;
+		color: var(--color-muted);
+		opacity: 0.5;
+		font-weight: 300;
+		line-height: 1;
+		pointer-events: none;
+	}
+
+	.heading-plus.top-left {
+		top: 0;
+		left: 0;
+	}
+
+	.heading-plus.top-right {
+		top: 0;
+		right: 0;
+	}
+
+	.heading-plus.bottom-left {
+		bottom: 0;
+		left: 0;
+	}
+
+	.heading-plus.bottom-right {
+		bottom: 0;
+		right: 0;
 	}
 
 	.contact-grid-layout {
@@ -1231,7 +1453,7 @@ const titleWords = title.split(" ");
 
 	.contact-sticky {
 		position: sticky;
-		top: var(--spacing-2xl);
+		top: 140px; /* Aligns beautifully below the fixed site header */
 	}
 
 	.contact-number {
@@ -1404,25 +1626,19 @@ const titleWords = title.split(" ");
 		.featured-content {
 			flex-direction: column;
 			padding: 0 var(--spacing-md);
+			gap: var(--spacing-2xl);
 		}
 
 		.featured-left {
 			flex: 1;
 			width: 100%;
+			position: relative;
+			top: 0;
 		}
 
 		.featured-right {
 			width: 100%;
-			position: relative;
-			min-height: 500px;
-		}
-
-		.project-list-item {
-			font-size: var(--font-size-sm);
-		}
-
-		.project-title-text {
-			font-size: var(--font-size-base);
+			min-height: auto;
 		}
 	}
 </style>
@@ -1436,25 +1652,28 @@ const titleWords = title.split(" ");
 
 	// Text scramble effect function
 	function initScrambleEffect(scrambleEl: Element) {
-		const chars = '!<>-_\\/[]{}—=+*^?#________';
-		const originalText = scrambleEl.textContent || '';
-		
+		const chars = "!<>-_\\/[]{}—=+*^?#________";
+		const originalText = scrambleEl.textContent || "";
+
 		// Create random reveal order
-		const indices = Array.from({ length: originalText.length }, (_, i) => i);
+		const indices = Array.from(
+			{ length: originalText.length },
+			(_, i) => i,
+		);
 		const shuffled = indices.sort(() => Math.random() - 0.5);
 		const revealOrder = new Map(shuffled.map((idx, order) => [idx, order]));
-		
+
 		let frame = 0;
 		const maxFrames = originalText.length * 0.5;
-		
+
 		const interval = setInterval(() => {
 			if (!scrambleEl) {
 				clearInterval(interval);
 				return;
 			}
-			
+
 			scrambleEl.textContent = originalText
-				.split('')
+				.split("")
 				.map((char, index) => {
 					const revealAt = revealOrder.get(index) || 0;
 					if (frame > revealAt) {
@@ -1462,13 +1681,13 @@ const titleWords = title.split(" ");
 					}
 					return chars[Math.floor(Math.random() * chars.length)];
 				})
-				.join('');
-			
+				.join("");
+
 			if (frame >= maxFrames) {
 				scrambleEl.textContent = originalText;
 				clearInterval(interval);
 			}
-			
+
 			frame += 2;
 		}, 12);
 	}
@@ -1652,11 +1871,12 @@ const titleWords = title.split(" ");
 					ease: "power2.out",
 					onStart: () => {
 						// Trigger scramble when content starts fading in
-						const scrambleEl = document.querySelector('[data-scramble]');
+						const scrambleEl =
+							document.querySelector("[data-scramble]");
 						if (scrambleEl) {
 							initScrambleEffect(scrambleEl);
 						}
-					}
+					},
 				},
 				0,
 			)
@@ -1691,71 +1911,176 @@ const titleWords = title.split(" ");
 		initHeroScroll();
 	}
 
-	// Lateral Pin Indicator for Featured Projects
-	const initLateralPinIndicator = () => {
-		const pinSection = document.querySelector(".pin-section");
-		const projectsList = document.querySelector(".projects-list");
-		const fillIndicator = document.querySelector(".fill-indicator");
-		const listItems = gsap.utils.toArray(".project-list-item");
-		const slides = gsap.utils.toArray(".project-slide");
+	// Featured Projects Timeline Animation
+	const initFeaturedTimeline = () => {
+		const timelineItems = gsap.utils.toArray(".timeline-item");
+		if (timelineItems.length === 0) return;
 
-		if (!pinSection || !projectsList || !fillIndicator || listItems.length === 0) return;
+		timelineItems.forEach((item: any) => {
+			const dot = item.querySelector(".timeline-dot");
+			const card = item.querySelector(".timeline-card-wrapper");
+			const line = item.querySelector(".timeline-line");
 
-		// Set initial state - first item active
-		if (listItems.length > 0) {
-			(listItems[0] as HTMLElement).classList.add("active");
-		}
-		if (slides.length > 0) {
-			(slides[0] as HTMLElement).classList.add("active");
-		}
+			// Fade in / up the card wrapper
+			gsap.fromTo(
+				card,
+				{ opacity: 0, y: 40 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.8,
+					ease: "power2.out",
+					scrollTrigger: {
+						trigger: item,
+						start: "top 85%",
+						toggleActions: "play none none reverse",
+					},
+				},
+			);
 
-		// Create the timeline with extended duration for the last project
-		const tl = gsap.timeline({
-			scrollTrigger: {
-				trigger: pinSection,
-				start: "top top",
-				end: `+=${(listItems.length + 1) * 100}%`, // Add extra scroll space
-				pin: true,
-				scrub: 1,
-				// markers: true, // Uncomment for debugging
-			},
-		});
+			// Activate/glow the dot
+			if (dot) {
+				gsap.fromTo(
+					dot,
+					{
+						scale: 0.8,
+						backgroundColor: "var(--color-bg)",
+						borderColor: "var(--color-text)",
+					},
+					{
+						scale: 1.2,
+						backgroundColor: "var(--color-accent)",
+						borderColor: "var(--color-accent)",
+						scrollTrigger: {
+							trigger: item,
+							start: "top 70%",
+							end: "bottom 30%",
+							toggleActions: "play reverse play reverse",
+						},
+					},
+				);
+			}
 
-		// Animate the fill indicator to complete at the end of the last project
-		tl.to(fillIndicator, {
-			height: "100%",
-			ease: "none",
-			duration: listItems.length, // Duration matches number of items
-		}, 0);
-
-		// Animate through each project with equal time allocation
-		listItems.forEach((item, index) => {
-			const startTime = index;
-			const endTime = index + 1;
-
-			// Activate list item at the start of its time slot
-			tl.call(() => {
-				listItems.forEach((li) => (li as HTMLElement).classList.remove("active"));
-				(item as HTMLElement).classList.add("active");
-			}, [], startTime);
-
-			// Show corresponding slide at the start of its time slot
-			if (slides[index]) {
-				tl.call(() => {
-					slides.forEach((slide) => (slide as HTMLElement).classList.remove("active"));
-					(slides[index] as HTMLElement).classList.add("active");
-				}, [], startTime);
+			// Grow/draw the vertical line segment
+			if (line) {
+				gsap.fromTo(
+					line,
+					{ scaleY: 0 },
+					{
+						scaleY: 1,
+						transformOrigin: "top center",
+						ease: "none",
+						scrollTrigger: {
+							trigger: item,
+							start: "top 70%",
+							end: "bottom 70%",
+							scrub: true,
+						},
+					},
+				);
 			}
 		});
-
-		// Hold the last project for the extra duration
-		// The timeline naturally extends beyond the last project activation
 	};
 
-	// Initialize lateral pin indicator
+	// Experience Section GSAP Transitions - Pinned Cards with Blur
+	const initExperienceTimeline = () => {
+		const cards = gsap.utils.toArray<HTMLElement>(".experience-card");
+		if (cards.length === 0) return;
+
+		cards.forEach((card, index) => {
+			// Skip animation for last card
+			if (index === cards.length - 1) return;
+
+			// Scale down and move down animation
+			gsap.to(card, {
+				scale: 0.9,
+				y: 150,
+				scrollTrigger: {
+					trigger: cards[index + 1],
+					start: "top 70%",
+					end: "top 10vh",
+					scrub: true,
+				},
+			});
+
+			// Blur animation - happens much later
+			gsap.to(card, {
+				filter: "blur(8px)",
+				scrollTrigger: {
+					trigger: cards[index + 1],
+					start: "top 20vh",
+					end: "top 10vh",
+					scrub: true,
+				},
+			});
+		});
+	};
+
+	// Magnetic Buttons
+	const initMagneticButtons = () => {
+		const zones = document.querySelectorAll(".magnetic-zone");
+		const strength = 0.35;
+
+		zones.forEach((zone: any) => {
+			const btn = zone.querySelector(".featured-link-btn");
+			if (!btn) return;
+
+			let rect: DOMRect | null = null;
+
+			zone.addEventListener("pointerenter", () => {
+				rect = zone.getBoundingClientRect();
+			});
+
+			zone.addEventListener("mousemove", (e: MouseEvent) => {
+				const currentRect = rect || zone.getBoundingClientRect();
+				rect = currentRect;
+				const x = gsap.utils.mapRange(
+					currentRect.left,
+					currentRect.right,
+					-currentRect.width / 2,
+					currentRect.width / 2,
+					e.clientX,
+				);
+				const y = gsap.utils.mapRange(
+					currentRect.top,
+					currentRect.bottom,
+					-currentRect.height / 2,
+					currentRect.height / 2,
+					e.clientY,
+				);
+
+				gsap.to(btn, {
+					x: x * strength,
+					y: y * strength,
+					duration: 0.4,
+					ease: "power2.out",
+					overwrite: true,
+				});
+			});
+
+			zone.addEventListener("mouseleave", () => {
+				rect = null;
+				gsap.to(btn, {
+					x: 0,
+					y: 0,
+					duration: 0.7,
+					ease: "elastic.out(1, 0.4)",
+					overwrite: true,
+				});
+			});
+		});
+	};
+
+	// Initialize features
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initLateralPinIndicator);
+		document.addEventListener("DOMContentLoaded", () => {
+			initFeaturedTimeline();
+			initExperienceTimeline();
+			initMagneticButtons();
+		});
 	} else {
-		initLateralPinIndicator();
+		initFeaturedTimeline();
+		initExperienceTimeline();
+		initMagneticButtons();
 	}
 </script>

@@ -63,6 +63,7 @@ const imgAlt =
 <style>
 	.project-card {
 		position: relative;
+		perspective: 1000px;
 	}
 
 	.card-link {
@@ -71,6 +72,8 @@ const imgAlt =
 		gap: var(--spacing-md, 1rem);
 		text-decoration: none;
 		color: inherit;
+		transform-style: preserve-3d;
+		will-change: transform;
 	}
 
 	.card-image {
@@ -78,6 +81,8 @@ const imgAlt =
 		overflow: hidden;
 		border-radius: 0;
 		border: 1px solid var(--color-border);
+		transform-style: preserve-3d;
+		will-change: transform;
 	}
 
 	.card-image img {
@@ -85,8 +90,9 @@ const imgAlt =
 		height: auto;
 		aspect-ratio: 4 / 3;
 		object-fit: cover;
-		transition: transform var(--transition-slow, 300ms ease);
+		transition: filter var(--transition-slow, 300ms ease);
 		filter: grayscale(0.2) contrast(1.1);
+		will-change: transform;
 	}
 
 	.card-image-placeholder {
@@ -122,7 +128,6 @@ const imgAlt =
 	}
 
 	.project-card:hover .card-image img {
-		transform: scale(1.03);
 		filter: grayscale(0) contrast(1);
 	}
 
@@ -201,3 +206,81 @@ const imgAlt =
 		color: var(--color-accent);
 	}
 </style>
+
+<script>
+	import { gsap } from "gsap";
+
+	const initCardTilt = () => {
+		const cards = document.querySelectorAll(".project-card");
+
+		cards.forEach((card) => {
+			const link = card.querySelector(".card-link") as HTMLElement;
+			const image = card.querySelector(".card-image img") as HTMLElement;
+
+			if (!link) return;
+
+			// QuickTo animations for smooth mouse tracking
+			const rotateX = gsap.quickTo(link, "rotationX", {
+				duration: 0.4,
+				ease: "power3.out",
+			});
+			const rotateY = gsap.quickTo(link, "rotationY", {
+				duration: 0.4,
+				ease: "power3.out",
+			});
+
+			const imageScale = image ? gsap.quickTo(image, "scale", {
+				duration: 0.4,
+				ease: "power3.out",
+			}) : null;
+			const innerX = image ? gsap.quickTo(image, "x", {
+				duration: 0.4,
+				ease: "power3.out",
+			}) : null;
+			const innerY = image ? gsap.quickTo(image, "y", {
+				duration: 0.4,
+				ease: "power3.out",
+			}) : null;
+
+			card.addEventListener("pointermove", (e: Event) => {
+				const mouseEvent = e as PointerEvent;
+				const rect = card.getBoundingClientRect();
+
+				// Get normalized mouse coords: -0.5 to 0.5 relative to card center
+				const x = (mouseEvent.clientX - rect.left) / rect.width - 0.5;
+				const y = (mouseEvent.clientY - rect.top) / rect.height - 0.5;
+
+				// Calculate tilt angle: max 12 degrees
+				// rotationX is based on Y movement (up/down)
+				// rotationY is based on X movement (left/right)
+				rotateX(-y * 12);
+				rotateY(x * 12);
+
+				// Parallax effect on the inner image: translation and scale
+				if (imageScale) imageScale(1.05);
+				if (innerX && innerY) {
+					innerX(x * 20);
+					innerY(y * 20);
+				}
+			});
+
+			card.addEventListener("pointerleave", () => {
+				// Reset rotation and translation
+				rotateX(0);
+				rotateY(0);
+				if (imageScale) imageScale(1);
+				if (innerX && innerY) {
+					innerX(0);
+					innerY(0);
+				}
+			});
+		});
+	};
+
+	// Initialize on page load
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initCardTilt);
+	} else {
+		initCardTilt();
+	}
+</script>
