@@ -47,21 +47,7 @@ const navLinks = [
 			title={`${siteTitle} RSS Feed`}
 			href="/rss.xml"
 		/>
-		<script is:inline>
-			// Apply theme immediately to prevent flash
-			(function () {
-				var c = document.cookie;
-				var i = c.indexOf("theme=");
-				var theme = i >= 0 ? c.slice(i + 6).split(";")[0] : null;
-				if (theme === "dark" || theme === "light") {
-					document.documentElement.classList.add(theme);
-				} else if (
-					window.matchMedia("(prefers-color-scheme: dark)").matches
-				) {
-					document.documentElement.classList.add("dark");
-				}
-			})();
-		</script>
+
 	</head>
 	<body>
 		<header class="site-header">
@@ -82,94 +68,23 @@ const navLinks = [
 
 		<footer class="site-footer">
 			<div class="footer-content">
-				<div class="footer-brand">
-					<span class="footer-logo">{siteTitle}</span>
-					<p class="footer-tagline">{siteTagline}</p>
+				<div class="footer-hero">
+					<h2 class="footer-name">RODRIGUEZ</h2>
 				</div>
-				<div class="footer-right">
-					<div class="theme-switcher">
-						<button
-							type="button"
-							class="theme-btn"
-							data-theme="light"
-							aria-label="Light mode">Light</button
-						>
-						<button
-							type="button"
-							class="theme-btn"
-							data-theme="dark"
-							aria-label="Dark mode">Dark</button
-						>
-						<button
-							type="button"
-							class="theme-btn"
-							data-theme="system"
-							aria-label="System theme">System</button
-						>
+				<div class="footer-bottom">
+					<div class="footer-brand">
+						<p class="footer-tagline">{siteTagline}</p>
 					</div>
-					<p class="footer-powered">
-						Built with <a href="https://astro.build">Astro</a>
-					</p>
+					<div class="footer-right">
+						<p class="footer-powered">
+							Built with <a href="https://astro.build">Astro</a>
+						</p>
+					</div>
 				</div>
 			</div>
 		</footer>
 
-		<script>
-			// Theme switcher
-			const THEME_REGEX = /theme=([^;]+)/;
-			const themeBtns =
-				document.querySelectorAll<HTMLButtonElement>(".theme-btn");
-			const root = document.documentElement;
 
-			function setTheme(theme: string) {
-				const secure = location.protocol === "https:" ? "; Secure" : "";
-				if (theme === "system") {
-					document.cookie = `theme=; path=/; max-age=0; SameSite=Lax${secure}`;
-					root.classList.remove("light", "dark");
-					if (
-						window.matchMedia("(prefers-color-scheme: dark)")
-							.matches
-					) {
-						root.classList.add("dark");
-					}
-				} else {
-					document.cookie = `theme=${theme}; path=/; max-age=31536000; SameSite=Lax${secure}`;
-					root.classList.remove("light", "dark");
-					root.classList.add(theme);
-				}
-				updateActiveBtn(theme);
-			}
-
-			function updateActiveBtn(theme: string) {
-				themeBtns.forEach((btn) => {
-					btn.classList.toggle("active", btn.dataset.theme === theme);
-				});
-			}
-
-			function getStoredTheme(): string {
-				const match = document.cookie.match(THEME_REGEX);
-				return match ? match[1] : "system";
-			}
-
-			// Initialize - apply stored theme on load
-			const storedTheme = getStoredTheme();
-			setTheme(storedTheme);
-
-			themeBtns.forEach((btn) => {
-				btn.addEventListener("click", () => {
-					setTheme(btn.dataset.theme || "system");
-				});
-			});
-
-			// Listen for system preference changes
-			window
-				.matchMedia("(prefers-color-scheme: dark)")
-				.addEventListener("change", (e) => {
-					if (getStoredTheme() === "system") {
-						root.classList.toggle("dark", e.matches);
-					}
-				});
-		</script>
 
 		<style is:global>
 			/*
@@ -189,14 +104,14 @@ const navLinks = [
 				}
 
 				:root {
-					/* Colors - Elegant/Minimal palette */
-					--color-bg: #fafafa;
-					--color-text: #1a1a1a;
-					--color-muted: #6b7280;
-					--color-border: #e5e7eb;
-					--color-surface: #ffffff;
-					--color-accent: #7c3aed;
-					--color-accent-muted: #a78bfa;
+					/* Colors — Dark mode only */
+					--color-bg: #0a0a0a;
+					--color-text: #f5f5f5;
+					--color-muted: #a1a1aa;
+					--color-border: #27272a;
+					--color-surface: #18181b;
+					--color-accent: #a78bfa;
+					--color-accent-muted: #7c3aed;
 
 					/* Typography */
 					--font-sans: system-ui, -apple-system, sans-serif;
@@ -231,33 +146,9 @@ const navLinks = [
 					--transition-slow: 300ms ease;
 				}
 
-				/* Dark mode via system preference (when no explicit class) */
-				@media (prefers-color-scheme: dark) {
-					:root:not(.light) {
-						--color-bg: #0a0a0a;
-						--color-text: #f5f5f5;
-						--color-muted: #a1a1aa;
-						--color-border: #27272a;
-						--color-surface: #18181b;
-						--color-accent: #a78bfa;
-						--color-accent-muted: #7c3aed;
-					}
-				}
-
-				/* Explicit dark mode */
-				:root.dark {
-					--color-bg: #0a0a0a;
-					--color-text: #f5f5f5;
-					--color-muted: #a1a1aa;
-					--color-border: #27272a;
-					--color-surface: #18181b;
-					--color-accent: #a78bfa;
-					--color-accent-muted: #7c3aed;
-				}
-
 				html {
 					scroll-behavior: smooth;
-					overflow-x: hidden;
+					overflow-x: clip;
 					max-width: 100vw;
 				}
 
@@ -269,7 +160,7 @@ const navLinks = [
 					background: var(--color-bg);
 					-webkit-font-smoothing: antialiased;
 					min-height: 100vh;
-					overflow-x: hidden;
+					overflow-x: clip;
 					max-width: 100vw;
 					position: relative;
 				}
@@ -373,22 +264,66 @@ const navLinks = [
 			}
 
 			main {
-				min-height: calc(100vh - 200px);
-				overflow-x: hidden;
+				min-height: 100vh;
+				overflow-x: clip;
 				max-width: 100vw;
+				position: relative;
+				z-index: 1;
+				background: var(--color-bg);
 			}
 
 			.site-footer {
-				max-width: var(--wide-width);
-				margin: 0 auto;
-				padding: var(--spacing-4xl) var(--spacing-lg);
+				width: 100%;
+				max-width: 100%;
+				margin: 0;
+				padding: 0 0 var(--spacing-4xl) 0;
 				border-top: 3px solid var(--color-text);
+				position: sticky;
+				bottom: 0;
+				z-index: 0;
 			}
 
 			.footer-content {
 				display: flex;
+				flex-direction: column;
+				gap: var(--spacing-3xl);
+				padding-top: var(--spacing-lg);
+			}
+
+			.footer-hero {
+				width: 100%;
+				padding: 0 var(--spacing-lg) var(--spacing-3xl) var(--spacing-lg);
+				overflow: hidden;
+				display: flex;
+				justify-content: center;
+				align-items: flex-start;
+			}
+
+			.footer-name {
+				font-family: "Syne", sans-serif;
+				font-size: clamp(2rem, 8.5vw, 12rem);
+				font-weight: 800;
+				text-transform: uppercase;
+				letter-spacing: -0.05em;
+				line-height: 0.85;
+				color: var(--color-text);
+				margin: 0;
+				padding: 0;
+				white-space: nowrap;
+				width: 100%;
+				text-align: center;
+				transform: scaleY(1.8);
+				transform-origin: top center;
+			}
+
+			.footer-bottom {
+				display: flex;
 				justify-content: space-between;
 				align-items: flex-start;
+				max-width: var(--wide-width);
+				margin: 0 auto;
+				width: 100%;
+				padding: 0 var(--spacing-lg);
 			}
 
 			.footer-brand {
@@ -484,6 +419,20 @@ const navLinks = [
 
 				.site-title {
 					font-size: var(--font-size-lg);
+				}
+
+				.nav-links {
+					flex-wrap: wrap;
+					justify-content: center;
+				}
+
+				.footer-bottom {
+					flex-direction: column;
+					gap: var(--spacing-xl);
+				}
+
+				.footer-right {
+					align-items: flex-start;
 				}
 
 				.nav-links {
