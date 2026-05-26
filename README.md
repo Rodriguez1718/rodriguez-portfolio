@@ -228,9 +228,9 @@ This project is open source and available under the MIT License.
 ## 👤 Author
 
 **Kris Rodriguez**
-- Portfolio: [Your URL]
-- GitHub: [@yourusername]
-- Email: your.email@example.com
+- Portfolio: https://rodirguez-portfolio.vercel.app/
+- GitHub: https://github.com/Rodriguez1718
+- Email: krisjohn.rodriguez@gmail.com
 
 ## 🙏 Acknowledgments
 
