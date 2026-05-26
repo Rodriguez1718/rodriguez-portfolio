@@ -71,7 +71,7 @@ const titleWords = title.split(" ");
 				<!-- Top Border with Text -->
 				<div class="hero-top-border">
 					<span class="border-text-left">4+ YEARS EXPERIENCE</span>
-					<span class="border-text-right">WEB DEVELOPER</span>
+					<span class="border-text-right">JUNIOR WEB DEVELOPER</span>
 				</div>
 				
 				<!-- Large Title -->
@@ -731,7 +731,7 @@ const titleWords = title.split(" ");
 
 	.about-heading {
 		font-family: "Syne", sans-serif;
-		font-size: clamp(2.5rem, 5vw, 4rem);
+		font-size: clamp(2.5rem, 5vw, 4.5rem);
 		font-weight: 800;
 		line-height: 1.1;
 		text-transform: uppercase;
@@ -849,7 +849,7 @@ const titleWords = title.split(" ");
 
 	.featured-heading {
 		font-family: "Syne", sans-serif;
-		font-size: clamp(2.5rem, 5vw, 4rem);
+		font-size: clamp(2.5rem, 5vw, 4.5rem);
 		font-weight: 800;
 		line-height: 1.1;
 		text-transform: uppercase;
@@ -997,6 +997,73 @@ const titleWords = title.split(" ");
 		gap: var(--spacing-2xl);
 	}
 
+	@media (max-width: 768px) {
+		.featured {
+			padding: var(--spacing-3xl) 0;
+		}
+
+		.featured-content {
+			flex-direction: column;
+			gap: var(--spacing-3xl);
+			padding: 0 var(--spacing-md);
+		}
+
+		.featured-left {
+			flex: 1;
+			position: relative;
+			top: 0;
+			width: 100%;
+		}
+
+		.featured-header {
+			margin-bottom: var(--spacing-xl);
+		}
+
+		.featured-heading {
+			font-size: clamp(2rem, 8vw, 3rem);
+		}
+
+		.featured-intro {
+			font-size: var(--font-size-sm);
+		}
+
+		.magnetic-zone {
+			width: 100%;
+			height: auto;
+			border-radius: 0;
+			margin: 0;
+			justify-content: flex-start;
+		}
+
+		.featured-link-btn {
+			width: 100%;
+			justify-content: center;
+			padding: var(--spacing-md) var(--spacing-xl);
+			font-size: 0.75rem;
+		}
+
+		.timeline-item {
+			gap: var(--spacing-md);
+		}
+
+		.timeline-marker {
+			width: 16px;
+		}
+
+		.timeline-dot {
+			width: 8px;
+			height: 8px;
+		}
+
+		.timeline-line {
+			width: 1px;
+		}
+
+		.projects-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.skills {
 		width: 100vw;
 		height: 100vh;
@@ -1054,7 +1121,7 @@ const titleWords = title.split(" ");
 
 	.skills-heading {
 		font-family: "Syne", sans-serif;
-		font-size: clamp(2.5rem, 5vw, 4rem);
+		font-size: clamp(2.5rem, 5vw, 4.5rem);
 		font-weight: 800;
 		line-height: 1.1;
 		text-transform: uppercase;
@@ -1201,7 +1268,7 @@ const titleWords = title.split(" ");
 
 	.experience-heading {
 		font-family: "Syne", sans-serif;
-		font-size: clamp(3rem, 6vw, 5rem);
+		font-size: clamp(2.5rem, 5vw, 4.5rem);
 		font-weight: 800;
 		line-height: 1.1;
 		text-transform: uppercase;
@@ -1368,12 +1435,119 @@ const titleWords = title.split(" ");
 	}
 
 	@media (max-width: 768px) {
+		.experience {
+			padding: var(--spacing-3xl) 0;
+		}
+
+		.experience-header {
+			margin-bottom: var(--spacing-3xl);
+			padding: 0 var(--spacing-md);
+			overflow: hidden;
+		}
+
+		.contact-heading-wrapper {
+			max-width: 100%;
+			overflow: hidden;
+		}
+
+		.experience-heading {
+			font-size: clamp(1.5rem, 7vw, 2.5rem);
+			word-break: keep-all;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.experience-intro {
+			font-size: var(--font-size-base);
+			padding: 0 var(--spacing-sm);
+		}
+
+		.experience-card {
+			min-height: auto;
+			margin-left: var(--spacing-md);
+			margin-right: var(--spacing-md);
+			margin-bottom: var(--spacing-lg);
+		}
+
+		.experience-card:nth-child(1) {
+			top: calc(5vh + 0px);
+		}
+
+		.experience-card:nth-child(2) {
+			top: calc(5vh + 20px);
+		}
+
+		.experience-card:nth-child(3) {
+			top: calc(5vh + 40px);
+		}
+
+		.experience-card:nth-child(4) {
+			top: calc(5vh + 60px);
+		}
+
+		.experience-card:nth-child(5) {
+			top: calc(5vh + 80px);
+		}
+
+		.experience-card:nth-child(6) {
+			top: calc(5vh + 100px);
+		}
+
+		.experience-card:nth-child(7) {
+			top: calc(5vh + 120px);
+		}
+
+		.experience-card:nth-child(8) {
+			top: calc(5vh + 140px);
+		}
+
+		.experience-card:nth-child(9) {
+			top: calc(5vh + 160px);
+		}
+
+		.experience-card:nth-child(10) {
+			top: calc(5vh + 180px);
+		}
+
+		.experience-card-inner {
+			padding: var(--spacing-2xl) var(--spacing-lg);
+		}
+
 		.experience-card-content {
 			flex-direction: column;
+			gap: var(--spacing-lg);
+		}
+
+		.experience-card-title {
+			font-size: clamp(1.5rem, 8vw, 2.5rem);
+		}
+
+		.experience-card-description {
+			font-size: var(--font-size-sm);
+			max-width: 100%;
+		}
+
+		.experience-card-right {
+			position: relative;
+			right: auto;
+			top: auto;
+			bottom: auto;
+			align-self: flex-end;
+			margin-top: var(--spacing-md);
 		}
 
 		.experience-card-number {
-			font-size: 4rem;
+			font-size: clamp(3rem, 15vw, 5rem);
+			opacity: 0.8;
+		}
+
+		.experience-bg-lines {
+			display: flex;
+		}
+
+		.vertical-line {
+			background: rgba(255, 255, 255, 0.1);
 		}
 	}
 
@@ -1458,7 +1632,7 @@ const titleWords = title.split(" ");
 
 	.contact-heading {
 		font-family: "Syne", sans-serif;
-		font-size: clamp(2.5rem, 5vw, 4rem);
+		font-size: clamp(2.5rem, 5vw, 4.5rem);
 		font-weight: 800;
 		line-height: 1.1;
 		text-transform: uppercase;
@@ -2150,7 +2324,40 @@ const titleWords = title.split(" ");
 		const cards = gsap.utils.toArray<HTMLElement>(".experience-card");
 		if (cards.length === 0) return;
 
+		// Fade in header elements
+		gsap.fromTo(
+			".experience-number, .experience-heading, .experience-intro",
+			{ opacity: 0, y: 30 },
+			{
+				opacity: 1,
+				y: 0,
+				stagger: 0.1,
+				scrollTrigger: {
+					trigger: ".experience-header",
+					start: "top 80%",
+					end: "top 50%",
+					scrub: true,
+				},
+			}
+		);
+
 		cards.forEach((card, index) => {
+			// Fade in card content on scroll
+			gsap.fromTo(
+				card.querySelector(".experience-card-content"),
+				{ opacity: 0, y: 30 },
+				{
+					opacity: 1,
+					y: 0,
+					scrollTrigger: {
+						trigger: card,
+						start: "top 80%",
+						end: "top 50%",
+						scrub: true,
+					},
+				}
+			);
+
 			// Skip animation for last card
 			if (index === cards.length - 1) return;
 
@@ -2234,16 +2441,55 @@ const titleWords = title.split(" ");
 		});
 	};
 
+	// Contact section fade in
+	const initContactAnimation = () => {
+		// Fade in left side
+		gsap.fromTo(
+			".contact-number, .contact-heading, .contact-intro",
+			{ opacity: 0, y: 30 },
+			{
+				opacity: 1,
+				y: 0,
+				stagger: 0.1,
+				scrollTrigger: {
+					trigger: ".contact",
+					start: "top 80%",
+					end: "top 50%",
+					scrub: true,
+				},
+			}
+		);
+
+		// Fade in contact rows
+		gsap.fromTo(
+			".contact-row",
+			{ opacity: 0, x: 30 },
+			{
+				opacity: 1,
+				x: 0,
+				stagger: 0.1,
+				scrollTrigger: {
+					trigger: ".contact-links-list",
+					start: "top 80%",
+					end: "top 50%",
+					scrub: true,
+				},
+			}
+		);
+	};
+
 	// Initialize features
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", () => {
 			initFeaturedTimeline();
 			initExperienceTimeline();
 			initMagneticButtons();
+			initContactAnimation();
 		});
 	} else {
 		initFeaturedTimeline();
 		initExperienceTimeline();
 		initMagneticButtons();
+		initContactAnimation();
 	}
 </script>
