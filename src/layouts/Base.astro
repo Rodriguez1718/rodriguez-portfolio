@@ -31,6 +31,7 @@ const navLinks = [
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>{fullTitle}</title>
 		<meta name="description" content={siteDescription} />
+		<link rel="icon" type="image/png" href="/KRIS.png" />
 		{image && <meta property="og:image" content={image} />}
 		<meta property="og:type" content={type} />
 		<meta property="og:title" content={fullTitle} />
@@ -61,13 +62,15 @@ const navLinks = [
 		<header class="site-header">
 			<nav class="nav">
 				<a href="/" class="site-title">{siteTitle}</a>
-				<button class="menu-btn" id="menuBtn" aria-label="Open menu">
-					<span class="menu-btn-label" id="menuLabel">Menu</span>
-					<span class="menu-btn-icon" id="menuIcon">
-						<span></span>
-						<span></span>
-					</span>
-				</button>
+				<div class="magnetic-zone">
+					<button class="menu-btn" id="menuBtn" aria-label="Open menu">
+						<span class="menu-btn-label" id="menuLabel">Menu</span>
+						<span class="menu-btn-icon" id="menuIcon">
+							<span></span>
+							<span></span>
+						</span>
+					</button>
+				</div>
 			</nav>
 		</header>
 
@@ -99,13 +102,21 @@ const navLinks = [
 					<h2 class="footer-name">RODRIGUEZ</h2>
 				</div>
 				<div class="footer-bottom">
-					<div class="footer-brand">
-						<p class="footer-tagline">{siteTagline}</p>
+					<div class="footer-left">
+						<p class="footer-copyright">© 2026 {siteTitle}. All rights reserved.</p>
+					</div>
+					<div class="footer-center">
+						<a href="mailto:contact@example.com" class="footer-link">Email</a>
+						<a href="https://github.com" target="_blank" class="footer-link">GitHub</a>
+						<a href="https://linkedin.com" target="_blank" class="footer-link">LinkedIn</a>
 					</div>
 					<div class="footer-right">
-						<p class="footer-powered">
-							Built with <a href="https://astro.build">Astro</a>
-						</p>
+						<div class="magnetic-zone">
+							<a href="/Rodriguez_CV.pdf" download class="footer-cv-btn">
+								<span>Download CV</span>
+								<span class="cv-arrow">↓</span>
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -222,6 +233,63 @@ const navLinks = [
 						document.body.style.overflow = '';
 					});
 				});
+
+				// ── Magnetic Menu Button ──
+				const magneticZone = document.querySelector('.site-header .magnetic-zone');
+				const btn = magneticZone?.querySelector('.menu-btn');
+				const strength = 0.35;
+
+				if (magneticZone && btn) {
+					let rect = null;
+
+					magneticZone.addEventListener('pointerenter', () => {
+						rect = magneticZone.getBoundingClientRect();
+					});
+
+					magneticZone.addEventListener('mousemove', (e) => {
+						const currentRect = rect || magneticZone.getBoundingClientRect();
+						rect = currentRect;
+						const x = ((e.clientX - currentRect.left) / currentRect.width - 0.5) * currentRect.width;
+						const y = ((e.clientY - currentRect.top) / currentRect.height - 0.5) * currentRect.height;
+
+						btn.style.transform = `translate(${x * strength}px, ${y * strength}px)`;
+						btn.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+					});
+
+					magneticZone.addEventListener('mouseleave', () => {
+						rect = null;
+						btn.style.transform = 'translate(0, 0)';
+						btn.style.transition = 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
+					});
+				}
+
+				// ── Magnetic CV Button ──
+				const cvMagneticZone = document.querySelector('.footer-right .magnetic-zone');
+				const cvBtn = cvMagneticZone?.querySelector('.footer-cv-btn');
+
+				if (cvMagneticZone && cvBtn) {
+					let cvRect = null;
+
+					cvMagneticZone.addEventListener('pointerenter', () => {
+						cvRect = cvMagneticZone.getBoundingClientRect();
+					});
+
+					cvMagneticZone.addEventListener('mousemove', (e) => {
+						const currentRect = cvRect || cvMagneticZone.getBoundingClientRect();
+						cvRect = currentRect;
+						const x = ((e.clientX - currentRect.left) / currentRect.width - 0.5) * currentRect.width;
+						const y = ((e.clientY - currentRect.top) / currentRect.height - 0.5) * currentRect.height;
+
+						cvBtn.style.transform = `translate(${x * strength}px, ${y * strength}px)`;
+						cvBtn.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+					});
+
+					cvMagneticZone.addEventListener('mouseleave', () => {
+						cvRect = null;
+						cvBtn.style.transform = 'translate(0, 0)';
+						cvBtn.style.transition = 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
+					});
+				}
 			});
 		</script>
 
@@ -394,6 +462,18 @@ const navLinks = [
 			}
 
 			/* ── Menu Button ── */
+			.site-header .magnetic-zone {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				width: 100px;
+				height: 100px;
+				border-radius: 50%;
+				cursor: pointer;
+				margin-top: -25px;
+				margin-bottom: -25px;
+			}
+
 			.menu-btn {
 				display: flex;
 				align-items: center;
@@ -403,6 +483,7 @@ const navLinks = [
 				cursor: pointer;
 				color: var(--color-text);
 				padding: 0;
+				will-change: transform;
 			}
 
 			.menu-btn-label {
@@ -570,11 +651,65 @@ const navLinks = [
 
 			.footer-hero {
 				width: 100%;
-				padding: 0 var(--spacing-lg) var(--spacing-3xl) var(--spacing-lg);
+				padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-3xl) var(--spacing-lg);
 				overflow: hidden;
 				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: var(--spacing-3xl);
+			}
+
+			.footer-right .magnetic-zone {
+				display: inline-flex;
+				align-items: center;
 				justify-content: center;
-				align-items: flex-start;
+				cursor: pointer;
+				width: 280px;
+				height: 280px;
+				border-radius: 50%;
+			}
+
+			.footer-cv-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--spacing-md);
+				padding: var(--spacing-md) var(--spacing-xl);
+				border: 1px solid var(--color-text);
+				background: transparent;
+				color: var(--color-text);
+				text-decoration: none;
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				transition: all 0.3s ease;
+				border-radius: 0;
+				white-space: nowrap;
+				will-change: transform;
+			}
+
+			.footer-cv-btn:hover {
+				background: var(--color-text);
+				color: var(--color-bg);
+				border-color: var(--color-text);
+			}
+
+			.cv-arrow {
+				transition: transform var(--transition-fast);
+				font-size: 1.1rem;
+				line-height: 1;
+			}
+
+			.footer-cv-btn:hover .cv-arrow {
+				transform: translateY(4px);
+			}
+
+			.footer-tagline {
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				color: var(--color-muted);
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
 			}
 
 			.footer-name {
@@ -592,55 +727,66 @@ const navLinks = [
 				text-align: center;
 				transform: scaleY(1.8);
 				transform-origin: top center;
+				text-shadow: 
+					1px 1px 0 rgba(0,0,0,0.1),
+					2px 2px 0 rgba(0,0,0,0.1),
+					3px 3px 0 rgba(0,0,0,0.1),
+					4px 4px 0 rgba(0,0,0,0.1),
+					5px 5px 0 rgba(0,0,0,0.1),
+					6px 6px 0 rgba(0,0,0,0.1),
+					7px 7px 0 rgba(0,0,0,0.1),
+					8px 8px 10px rgba(0,0,0,0.3);
 			}
 
 			.footer-bottom {
-				display: flex;
-				justify-content: space-between;
-				align-items: flex-start;
+				display: grid;
+				grid-template-columns: 1fr auto auto;
+				align-items: center;
+				gap: var(--spacing-2xl);
 				max-width: var(--wide-width);
 				margin: 0 auto;
 				width: 100%;
-				padding: 0 var(--spacing-lg);
+				padding: var(--spacing-xl) var(--spacing-lg);
+				border-top: 1px solid var(--color-border);
 			}
 
-			.footer-brand {
+			.footer-left {
 				display: flex;
-				flex-direction: column;
-				gap: var(--spacing-xs);
+				justify-content: flex-start;
 			}
 
-			.footer-tagline {
-				font-family: var(--font-mono);
-				text-transform: uppercase;
-				letter-spacing: 0.05em;
-				font-size: var(--font-size-xs);
-				color: var(--color-muted);
+			.footer-center {
+				display: flex;
+				justify-content: center;
+				gap: var(--spacing-xl);
 			}
 
 			.footer-right {
 				display: flex;
-				flex-direction: column;
-				align-items: flex-end;
-				gap: var(--spacing-lg);
+				justify-content: flex-end;
+				margin-left: auto;
 			}
 
-			.footer-powered {
+			.footer-copyright {
 				font-family: var(--font-mono);
 				font-size: 0.75rem;
+				color: var(--color-muted);
 				text-transform: uppercase;
 				letter-spacing: 0.05em;
+			}
+
+			.footer-link {
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
 				color: var(--color-muted);
-			}
-
-			.footer-powered a {
-				color: var(--color-text);
 				text-decoration: none;
-				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				transition: color var(--transition-fast);
 			}
 
-			.footer-powered a:hover {
-				text-decoration: underline;
+			.footer-link:hover {
+				color: var(--color-text);
 			}
 
 			@media (max-width: 640px) {
@@ -648,28 +794,104 @@ const navLinks = [
 					padding: var(--spacing-md) var(--spacing-md);
 				}
 
+				.menu-overlay {
+					padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-xl);
+				}
+
+				.menu-nav {
+					padding-top: var(--spacing-xl);
+				}
+
+				.menu-nav-item {
+					padding: var(--spacing-md) 0;
+					gap: var(--spacing-md);
+				}
+
+				.menu-nav-num {
+					font-size: 0.6rem;
+				}
+
 				.menu-nav-label {
-					font-size: clamp(2rem, 12vw, 4rem);
+					font-size: clamp(1.75rem, 10vw, 3.5rem);
+					letter-spacing: -0.02em;
 				}
 
-				.footer-bottom {
+				.menu-footer {
 					flex-direction: column;
-					gap: var(--spacing-xl);
+					align-items: flex-start;
+					gap: var(--spacing-md);
+					padding-top: var(--spacing-xl);
 				}
 
-				.footer-content {
-					flex-direction: column;
-					gap: var(--spacing-xl);
-					align-items: center;
-					text-align: center;
+				.menu-tagline {
+					font-size: 0.65rem;
 				}
 
-				.footer-right {
-					align-items: center;
+				.menu-admin {
+					font-size: 0.65rem;
 				}
 
 				.site-footer {
-					padding: var(--spacing-2xl) var(--spacing-md);
+					padding: 0 0 var(--spacing-3xl) 0;
+				}
+
+				.footer-content {
+					gap: var(--spacing-2xl);
+				}
+
+				.footer-hero {
+					padding: var(--spacing-2xl) var(--spacing-md) var(--spacing-xl) var(--spacing-md);
+					gap: var(--spacing-xl);
+				}
+
+				.footer-name {
+					font-size: clamp(1.75rem, 9.5vw, 4rem);
+					transform: scaleY(1.4);
+					letter-spacing: -0.03em;
+				}
+
+				.footer-bottom {
+					display: flex;
+					flex-direction: column;
+					gap: var(--spacing-lg);
+					padding: var(--spacing-lg) var(--spacing-md);
+					text-align: center;
+				}
+
+				.footer-left {
+					justify-content: center;
+					order: 3;
+				}
+
+				.footer-center {
+					justify-content: center;
+					flex-wrap: wrap;
+					order: 1;
+				}
+
+				.footer-right {
+					justify-content: center;
+					order: 2;
+					width: 100%;
+				}
+
+				.footer-right .magnetic-zone {
+					width: 100%;
+					display: flex;
+				}
+
+				.footer-cv-btn {
+					width: 100%;
+					justify-content: center;
+					padding: var(--spacing-md) var(--spacing-lg);
+				}
+
+				.footer-copyright {
+					font-size: 0.65rem;
+				}
+
+				.footer-link {
+					font-size: 0.65rem;
 				}
 
 				h1 {
